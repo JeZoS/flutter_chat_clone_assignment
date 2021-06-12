@@ -172,7 +172,7 @@ class _AllChatsState extends State<AllChats> {
                                   child: CircleAvatar(
                                     child: ClipOval(
                                       child: Image.network(
-                                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgp-QJoDdH1XZruhuEc5hwLOopPLFC9VaTdg&usqp=CAU'),
+                                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_tgGp-oeRSMrLJB0cMDE4XgX_8KGnc63uJg&usqp=CAU'),
                                     ),
                                     radius: 25,
                                   ),
@@ -269,7 +269,13 @@ class _MessagesState extends State<Messages> {
                       ],
                     );
                   }
+                  List<String> users = [];
                   for (var mails in dta.docs) {
+                    if(users.contains(mails['email'])){
+                      print(mails['email']);
+                      continue;
+                    }
+                    users.add(mails['email']);
                     lst.add(
                       Material(
                         child: InkWell(
@@ -292,7 +298,7 @@ class _MessagesState extends State<Messages> {
                             child: Row(
                               children: [
                                 CircleAvatar(
-                                  backgroundColor: Colors.cyan,
+                                  backgroundColor: Colors.lightBlueAccent,
                                   radius: 35,
                                 ),
                                 SizedBox(
@@ -309,11 +315,11 @@ class _MessagesState extends State<Messages> {
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
-                                      Text("Yo what's upp"),
+                                      Text("Yo what's up"),
                                     ],
                                   ),
                                 ),
-                                Text("13:09")
+                                // Text("13:09")
                               ],
                             ),
                           ),

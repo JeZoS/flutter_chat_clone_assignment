@@ -75,6 +75,7 @@ class _AuthenticateState extends State<Authenticate> {
                     });
                   },
                   textAlign: TextAlign.center,
+                  obscureText: true,
                   decoration: InputDecoration(
                     hintText: "Password",
                     contentPadding: EdgeInsets.symmetric(

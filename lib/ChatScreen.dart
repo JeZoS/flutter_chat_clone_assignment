@@ -174,37 +174,37 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       Expanded(
                         child: StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('/chats')
-                                .doc('${widget.index}')
-                                .collection('${widget.receiverEmail}')
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              List<Widget> lst = [];
-                              if (snapshot.hasData) {
-                                var data = snapshot.data;
-                                var dta;
-                                if (data != null) {
-                                  dta = data.docs.reversed;
-                                  if (dta.length == 0) {
-                                    sendUser();
-                                  }
-                                  for (var msgs in dta) {
-                                    lst.add(
-                                      MessageBubble(
-                                          message: msgs['message'],
-                                          email: msgs['email']),
-                                    );
-                                  }
+                          stream: FirebaseFirestore.instance
+                              .collection('/chats')
+                              .doc('${widget.index}')
+                              .collection('${widget.receiverEmail}')
+                              .orderBy('createdAt', descending: true)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            List<Widget> lst = [];
+                            if (snapshot.hasData) {
+                              var data = snapshot.data;
+                              var dta;
+                              if (data != null) {
+                                dta = data.docs;
+                                if (dta.length == 0) {
+                                  sendUser();
+                                }
+                                for (var msgs in dta) {
+                                  lst.add(
+                                    MessageBubble(
+                                        message: msgs['message'],
+                                        email: msgs['email']),
+                                  );
                                 }
                               }
-                              return ListView(
-                                reverse: true,
-                                children: lst,
-                              );
                             }
-                            // itemCount: 19,
-                            ),
+                            return ListView(
+                              reverse: true,
+                              children: lst,
+                            );
+                          },
+                        ),
                       ),
                       Container(
                         child: Row(
@@ -257,7 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             GestureDetector(
                               onTap: () async {
                                 ctrl.clear();
-                                var dta = await FirebaseFirestore.instance
+                                FirebaseFirestore.instance
                                     .collection('/chats')
                                     .doc('${widget.index}')
                                     .collection('${widget.receiverEmail}')
@@ -265,8 +265,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                   'message': input,
                                   'email':
                                       FirebaseAuth.instance.currentUser?.email,
+                                  'createdAt': Timestamp.now(),
                                 });
-                                await FirebaseFirestore.instance
+                                FirebaseFirestore.instance
                                     .collection('/chats')
                                     .doc('${widget.receiverId}')
                                     .collection(
@@ -276,6 +277,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     'message': input,
                                     'email': FirebaseAuth
                                         .instance.currentUser?.email,
+                                    'createdAt': Timestamp.now(),
                                   },
                                 );
                                 // ctrl.clear();
@@ -338,8 +340,12 @@ class _MessageBubbleState extends State<MessageBubble> {
           decoration: BoxDecoration(
             color: Colors.grey.shade300,
             borderRadius: BorderRadius.only(
-              topLeft: widget.email == FirebaseAuth.instance.currentUser?.email ? Radius.circular(15) : Radius.circular(0) ,
-              topRight: widget.email != FirebaseAuth.instance.currentUser?.email ? Radius.circular(15) : Radius.circular(0) ,
+              topLeft: widget.email == FirebaseAuth.instance.currentUser?.email
+                  ? Radius.circular(15)
+                  : Radius.circular(0),
+              topRight: widget.email != FirebaseAuth.instance.currentUser?.email
+                  ? Radius.circular(15)
+                  : Radius.circular(0),
               bottomLeft: Radius.circular(15),
               bottomRight: Radius.circular(15),
             ),
